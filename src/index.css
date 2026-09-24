@@ -1,0 +1,826 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #8E2800;
+  --color-border: #e2e8f0;
+  --color-card: #ffffff;
+  --color-input: #cbd5e1;
+  --color-background: #ffffff;
+  --color-foreground: #0f172a;
+  --color-ring: #8E2800;
+  --color-accent: #f1f5f9;
+  --color-muted-foreground: #64748b;
+  --color-destructive: #ef4444;
+  --color-warning: #f59e0b;
+  --color-success: #10b981;
+}
+
+@layer base {
+  :root {
+    --color-primary: #3C0E11;
+    --color-gold: #C5A880;
+    --color-bg: #F7F3EF;
+    --color-surface: #FFFFFF;
+    --color-text: #1E293B;
+  }
+
+  html {
+    font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: #F7F3EF;
+    color: #1E293B;
+    overflow-x: hidden;
+  }
+}
+
+/* Custom Utilities for Persian/Arabic typography & smooth animations */
+.font-garamond {
+  font-family: 'Cormorant Garamond', serif;
+}
+
+.font-vazir {
+  font-family: 'Vazirmatn', sans-serif;
+}
+
+/* Hide scrollbars while keeping scroll functionality */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Subtle glow and luxury styling */
+.luxury-gold-glow {
+  box-shadow: 0 0 25px rgba(197, 168, 128, 0.25);
+}
+
+.luxury-card {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 4px 20px -2px rgba(60, 14, 17, 0.05);
+}
+
+/* ========================================================
+   MODERN SAAS LIST & DROPDOWN ANIMATIONS & STYLES (200-300ms)
+   ======================================================== */
+
+@keyframes enter {
+  from {
+    opacity: var(--tw-enter-opacity, 1);
+    transform: translate3d(var(--tw-enter-translate-x, 0), var(--tw-enter-translate-y, 0), 0) scale3d(var(--tw-enter-scale, 1), var(--tw-enter-scale, 1), var(--tw-enter-scale, 1)) rotate(var(--tw-enter-rotate, 0));
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale3d(1, 1, 1) rotate(0);
+  }
+}
+
+@keyframes exit {
+  from {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale3d(1, 1, 1) rotate(0);
+  }
+  to {
+    opacity: var(--tw-exit-opacity, 1);
+    transform: translate3d(var(--tw-exit-translate-x, 0), var(--tw-exit-translate-y, 0), 0) scale3d(var(--tw-exit-scale, 1), var(--tw-exit-scale, 1), var(--tw-exit-scale, 1)) rotate(var(--tw-exit-rotate, 0));
+  }
+}
+
+.animate-in {
+  animation: enter 250ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --tw-enter-opacity: 0;
+  --tw-enter-scale: 0.96;
+  --tw-enter-translate-y: -10px;
+}
+
+.fade-in {
+  --tw-enter-opacity: 0;
+}
+
+.zoom-in-95 {
+  --tw-enter-scale: 0.95;
+}
+
+.slide-in-from-top-2 {
+  --tw-enter-translate-y: -8px;
+}
+
+.slide-in-from-top-4 {
+  --tw-enter-translate-y: -16px;
+}
+
+@keyframes dropdown-fade-slide-left {
+  0% {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.96);
+    transform-origin: top left;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    transform-origin: top left;
+  }
+}
+
+@keyframes dropdown-fade-slide-right {
+  0% {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.96);
+    transform-origin: top right;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    transform-origin: top right;
+  }
+}
+
+/* ========================================================
+   PHYSICAL SPRING ANIMATION ENGINE (Framer Motion / SwiftUI Style)
+   ======================================================== */
+
+@keyframes spring-dropdown-left {
+  0% {
+    opacity: 0;
+    transform: translateY(-22px) scale(0.86);
+    transform-origin: top left;
+  }
+  38% {
+    opacity: 1;
+    transform: translateY(6px) scale(1.045);
+  }
+  62% {
+    transform: translateY(-2.5px) scale(0.985);
+  }
+  80% {
+    transform: translateY(1px) scale(1.008);
+  }
+  92% {
+    transform: translateY(-0.3px) scale(0.998);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    transform-origin: top left;
+  }
+}
+
+@keyframes spring-dropdown-right {
+  0% {
+    opacity: 0;
+    transform: translateY(-22px) scale(0.86);
+    transform-origin: top right;
+  }
+  38% {
+    opacity: 1;
+    transform: translateY(6px) scale(1.045);
+  }
+  62% {
+    transform: translateY(-2.5px) scale(0.985);
+  }
+  80% {
+    transform: translateY(1px) scale(1.008);
+  }
+  92% {
+    transform: translateY(-0.3px) scale(0.998);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    transform-origin: top right;
+  }
+}
+
+@keyframes spring-item-pop {
+  0% {
+    opacity: 0;
+    transform: translateY(-16px) scale(0.82);
+  }
+  42% {
+    opacity: 1;
+    transform: translateY(4px) scale(1.055);
+  }
+  68% {
+    transform: translateY(-1.5px) scale(0.985);
+  }
+  85% {
+    transform: translateY(0.5px) scale(1.01);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Top-Left Navbar Dropdown Menu (Portal switch & profile menu) */
+.absolute.left-0.top-full,
+[class*="left-0"][class*="top-full"],
+.top-left-dropdown {
+  animation: spring-dropdown-left 420ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
+  transform-origin: top left !important;
+  border-radius: 18px !important;
+  box-shadow: 
+    0 24px 48px -12px rgba(60, 14, 17, 0.15),
+    0 10px 20px -5px rgba(60, 14, 17, 0.07),
+    0 0 0 1px rgba(197, 168, 128, 0.22),
+    inset 0 1px 2px 0 rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid rgba(60, 14, 17, 0.08) !important;
+  background: rgba(255, 255, 255, 0.96) !important;
+  backdrop-filter: blur(24px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(190%) !important;
+  perspective: 800px;
+  will-change: transform, opacity;
+}
+
+/* Top-Right Navbar Dropdowns */
+.absolute.right-0.top-full,
+[class*="right-0"][class*="top-full"] {
+  animation: spring-dropdown-right 420ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
+  transform-origin: top right !important;
+  border-radius: 18px !important;
+  box-shadow: 
+    0 24px 48px -12px rgba(60, 14, 17, 0.15),
+    0 10px 20px -5px rgba(60, 14, 17, 0.07),
+    0 0 0 1px rgba(197, 168, 128, 0.22),
+    inset 0 1px 2px 0 rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid rgba(60, 14, 17, 0.08) !important;
+  background: rgba(255, 255, 255, 0.96) !important;
+  backdrop-filter: blur(24px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(190%) !important;
+  perspective: 800px;
+  will-change: transform, opacity;
+}
+
+/* Sequential Spring Stagger for all dropdown list items */
+.absolute.left-0.top-full > *,
+.absolute.left-0.top-full button,
+.absolute.left-0.top-full > div > *,
+.absolute.right-0.top-full > *,
+.absolute.right-0.top-full button,
+.absolute.right-0.top-full > div > *,
+.saas-dropdown > *,
+.saas-menu > *,
+[role="menu"] > *,
+[role="listbox"] > *,
+.dropdown-menu > *,
+.dropdown-content > *,
+.select-dropdown > * {
+  animation: spring-item-pop 360ms cubic-bezier(0.34, 1.56, 0.64, 1) both !important;
+  will-change: transform, opacity;
+}
+
+/* Precise Stagger Delays (50ms step for noticeable, elegant one-by-one waterfall entrance) */
+.absolute.left-0.top-full > *:nth-child(1),
+.absolute.left-0.top-full button:nth-of-type(1),
+.absolute.right-0.top-full > *:nth-child(1),
+.absolute.right-0.top-full button:nth-of-type(1),
+.saas-dropdown > *:nth-child(1),
+[role="menu"] > *:nth-child(1),
+[role="listbox"] > *:nth-child(1) {
+  animation-delay: 40ms !important;
+}
+
+.absolute.left-0.top-full > *:nth-child(2),
+.absolute.left-0.top-full button:nth-of-type(2),
+.absolute.right-0.top-full > *:nth-child(2),
+.absolute.right-0.top-full button:nth-of-type(2),
+.saas-dropdown > *:nth-child(2),
+[role="menu"] > *:nth-child(2),
+[role="listbox"] > *:nth-child(2) {
+  animation-delay: 95ms !important;
+}
+
+.absolute.left-0.top-full > *:nth-child(3),
+.absolute.left-0.top-full button:nth-of-type(3),
+.absolute.right-0.top-full > *:nth-child(3),
+.absolute.right-0.top-full button:nth-of-type(3),
+.saas-dropdown > *:nth-child(3),
+[role="menu"] > *:nth-child(3),
+[role="listbox"] > *:nth-child(3) {
+  animation-delay: 150ms !important;
+}
+
+.absolute.left-0.top-full > *:nth-child(4),
+.absolute.left-0.top-full button:nth-of-type(4),
+.absolute.right-0.top-full > *:nth-child(4),
+.absolute.right-0.top-full button:nth-of-type(4),
+.saas-dropdown > *:nth-child(4),
+[role="menu"] > *:nth-child(4),
+[role="listbox"] > *:nth-child(4) {
+  animation-delay: 205ms !important;
+}
+
+.absolute.left-0.top-full > *:nth-child(5),
+.absolute.left-0.top-full button:nth-of-type(5),
+.absolute.right-0.top-full > *:nth-child(5),
+.absolute.right-0.top-full button:nth-of-type(5),
+.saas-dropdown > *:nth-child(5),
+[role="menu"] > *:nth-child(5),
+[role="listbox"] > *:nth-child(5) {
+  animation-delay: 260ms !important;
+}
+
+.absolute.left-0.top-full > *:nth-child(6),
+.absolute.left-0.top-full button:nth-of-type(6),
+.absolute.right-0.top-full > *:nth-child(6),
+.absolute.right-0.top-full button:nth-of-type(6),
+.saas-dropdown > *:nth-child(6),
+[role="menu"] > *:nth-child(6),
+[role="listbox"] > *:nth-child(6) {
+  animation-delay: 315ms !important;
+}
+
+.absolute.left-0.top-full > *:nth-child(7),
+.absolute.left-0.top-full button:nth-of-type(7),
+.absolute.right-0.top-full > *:nth-child(7),
+.absolute.right-0.top-full button:nth-of-type(7),
+.saas-dropdown > *:nth-child(7),
+[role="menu"] > *:nth-child(7),
+[role="listbox"] > *:nth-child(7) {
+  animation-delay: 370ms !important;
+}
+
+.absolute.left-0.top-full > *:nth-child(8),
+.absolute.left-0.top-full button:nth-of-type(8),
+.absolute.right-0.top-full > *:nth-child(8),
+.absolute.right-0.top-full button:nth-of-type(8),
+.saas-dropdown > *:nth-child(8),
+[role="menu"] > *:nth-child(8),
+[role="listbox"] > *:nth-child(8) {
+  animation-delay: 425ms !important;
+}
+
+.absolute.left-0.top-full > *:nth-child(9),
+.absolute.left-0.top-full button:nth-of-type(9),
+.absolute.right-0.top-full > *:nth-child(9),
+.absolute.right-0.top-full button:nth-of-type(9) {
+  animation-delay: 480ms !important;
+}
+
+.absolute.left-0.top-full > *:nth-child(10),
+.absolute.left-0.top-full button:nth-of-type(10),
+.absolute.right-0.top-full > *:nth-child(10),
+.absolute.right-0.top-full button:nth-of-type(10) {
+  animation-delay: 535ms !important;
+}
+
+/* Stagger inside nested section containers */
+.absolute.left-0.top-full > div > button:nth-of-type(1),
+.absolute.right-0.top-full > div > button:nth-of-type(1) {
+  animation-delay: 380ms !important;
+}
+
+.absolute.left-0.top-full > div > button:nth-of-type(2),
+.absolute.right-0.top-full > div > button:nth-of-type(2) {
+  animation-delay: 435ms !important;
+}
+
+.absolute.left-0.top-full > div > button:nth-of-type(3),
+.absolute.right-0.top-full > div > button:nth-of-type(3) {
+  animation-delay: 490ms !important;
+}
+
+/* Ultra-Smooth Magnetic Hover & Touch Feedback */
+.absolute.left-0.top-full button:hover,
+.absolute.right-0.top-full button:hover {
+  background-color: rgba(60, 14, 17, 0.045) !important;
+  transform: translateX(-4px) scale(1.01) !important;
+  color: #3C0E11 !important;
+}
+
+.absolute.left-0.top-full button:active,
+.absolute.right-0.top-full button:active {
+  transform: scale(0.985) !important;
+  background-color: rgba(60, 14, 17, 0.08) !important;
+}
+
+/* Global Dropdown, Select, Menu, and Popover container styles */
+.saas-dropdown,
+.saas-menu,
+[role="menu"],
+[role="listbox"],
+.dropdown-menu,
+.dropdown-content,
+.select-dropdown,
+.popover-dropdown,
+details[open] > summary ~ * {
+  animation: saas-dropdown-enter 220ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform-origin: top center;
+  border-radius: 14px;
+  background-color: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(60, 14, 17, 0.09);
+  box-shadow: 0 12px 30px -6px rgba(60, 14, 17, 0.08), 0 4px 12px -2px rgba(60, 14, 17, 0.04), 0 0 0 1px rgba(197, 168, 128, 0.12);
+  padding: 6px;
+  max-height: min(340px, 62vh);
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #c5a880 #f7f3ef;
+  z-index: 50;
+}
+
+/* Dropdown placed upwards */
+.saas-dropdown-up,
+.dropdown-up {
+  animation: saas-dropdown-up-enter 220ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform-origin: bottom center;
+}
+
+/* Scrollbar inside dropdowns */
+.saas-dropdown::-webkit-scrollbar,
+.saas-menu::-webkit-scrollbar,
+[role="menu"]::-webkit-scrollbar,
+[role="listbox"]::-webkit-scrollbar,
+.dropdown-menu::-webkit-scrollbar {
+  width: 5px;
+}
+
+.saas-dropdown::-webkit-scrollbar-track,
+.saas-menu::-webkit-scrollbar-track,
+[role="menu"]::-webkit-scrollbar-track,
+[role="listbox"]::-webkit-scrollbar-track,
+.dropdown-menu::-webkit-scrollbar-track {
+  background: #f7f3ef;
+  border-radius: 9999px;
+}
+
+.saas-dropdown::-webkit-scrollbar-thumb,
+.saas-menu::-webkit-scrollbar-thumb,
+[role="menu"]::-webkit-scrollbar-thumb,
+[role="listbox"]::-webkit-scrollbar-thumb,
+.dropdown-menu::-webkit-scrollbar-thumb {
+  background: #c5a880;
+  border-radius: 9999px;
+}
+
+.saas-dropdown::-webkit-scrollbar-thumb:hover,
+.saas-menu::-webkit-scrollbar-thumb:hover,
+[role="menu"]::-webkit-scrollbar-thumb:hover,
+[role="listbox"]::-webkit-scrollbar-thumb:hover,
+.dropdown-menu::-webkit-scrollbar-thumb:hover {
+  background: #3c0e11;
+}
+
+/* List Items Hover & Interactive feedback */
+.saas-dropdown-item,
+.dropdown-item,
+[role="menuitem"],
+[role="option"] {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 8px 12px;
+  margin-bottom: 2px;
+  border-radius: 9px;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: #1e293b;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1), color 150ms cubic-bezier(0.4, 0, 0.2, 1), transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.saas-dropdown-item:last-child,
+.dropdown-item:last-child,
+[role="menuitem"]:last-child,
+[role="option"]:last-child {
+  margin-bottom: 0;
+}
+
+.saas-dropdown-item:hover,
+.saas-dropdown-item:focus-visible,
+.dropdown-item:hover,
+.dropdown-item:focus-visible,
+[role="menuitem"]:hover,
+[role="menuitem"]:focus-visible,
+[role="option"]:hover,
+[role="option"]:focus-visible {
+  background-color: rgba(60, 14, 17, 0.05);
+  color: #3C0E11;
+  transform: translateX(-2px);
+}
+
+.saas-dropdown-item:active,
+.dropdown-item:active,
+[role="menuitem"]:active,
+[role="option"]:active {
+  background-color: rgba(60, 14, 17, 0.09);
+  transform: scale(0.99);
+}
+
+/* Expandable list / Accordion details */
+details > summary {
+  cursor: pointer;
+  user-select: none;
+  transition: color 150ms ease, background-color 150ms ease;
+}
+
+details[open] > summary {
+  color: #3C0E11;
+}
+
+/* Smooth motion for any custom list popup */
+.animate-list-open {
+  animation: saas-dropdown-enter 240ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-list-slide-up {
+  animation: saas-dropdown-up-enter 240ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ========================================================
+   MOBILE LIST STAGGER ANIMATION ENGINE
+   Fluid, physics-spring waterfall entrance for mobile lists & sheets
+   ======================================================== */
+
+@keyframes mobileStaggerEntrance {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0) scale(0.96);
+    filter: blur(2px);
+  }
+  60% {
+    opacity: 0.95;
+    filter: blur(0);
+  }
+  85% {
+    transform: translate3d(0, -1.5px, 0) scale(1.008);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes mobileSpringPop {
+  0% {
+    opacity: 0;
+    transform: translateY(16px) scale(0.92);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-3px) scale(1.025);
+  }
+  75% {
+    transform: translateY(1px) scale(0.995);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Mobile Stagger Item base class & default selectors */
+.mobile-stagger-item,
+.mobile-stagger-list > *,
+.mobile-list-stagger > *,
+[data-mobile-stagger] > *,
+#mobile-drawer-menu > *,
+.mobile-drawer-menu > *,
+#portal-overflow-dropdown .grid > *,
+#portal-overflow-dropdown .grid-cols-2 > * {
+  animation: mobileStaggerEntrance 380ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+/* Precise Stagger Waterfall Delays (one-by-one cascaded entrance) */
+.mobile-stagger-list > *:nth-child(1),
+.mobile-list-stagger > *:nth-child(1),
+[data-mobile-stagger] > *:nth-child(1),
+#mobile-drawer-menu > *:nth-child(1),
+.mobile-drawer-menu > *:nth-child(1),
+#portal-overflow-dropdown .grid > *:nth-child(1),
+#portal-overflow-dropdown .grid-cols-2 > *:nth-child(1),
+.mobile-stagger-d-1 {
+  animation-delay: 35ms !important;
+}
+
+.mobile-stagger-list > *:nth-child(2),
+.mobile-list-stagger > *:nth-child(2),
+[data-mobile-stagger] > *:nth-child(2),
+#mobile-drawer-menu > *:nth-child(2),
+.mobile-drawer-menu > *:nth-child(2),
+#portal-overflow-dropdown .grid > *:nth-child(2),
+#portal-overflow-dropdown .grid-cols-2 > *:nth-child(2),
+.mobile-stagger-d-2 {
+  animation-delay: 75ms !important;
+}
+
+.mobile-stagger-list > *:nth-child(3),
+.mobile-list-stagger > *:nth-child(3),
+[data-mobile-stagger] > *:nth-child(3),
+#mobile-drawer-menu > *:nth-child(3),
+.mobile-drawer-menu > *:nth-child(3),
+#portal-overflow-dropdown .grid > *:nth-child(3),
+#portal-overflow-dropdown .grid-cols-2 > *:nth-child(3),
+.mobile-stagger-d-3 {
+  animation-delay: 115ms !important;
+}
+
+.mobile-stagger-list > *:nth-child(4),
+.mobile-list-stagger > *:nth-child(4),
+[data-mobile-stagger] > *:nth-child(4),
+#mobile-drawer-menu > *:nth-child(4),
+.mobile-drawer-menu > *:nth-child(4),
+#portal-overflow-dropdown .grid > *:nth-child(4),
+#portal-overflow-dropdown .grid-cols-2 > *:nth-child(4),
+.mobile-stagger-d-4 {
+  animation-delay: 155ms !important;
+}
+
+.mobile-stagger-list > *:nth-child(5),
+.mobile-list-stagger > *:nth-child(5),
+[data-mobile-stagger] > *:nth-child(5),
+#mobile-drawer-menu > *:nth-child(5),
+.mobile-drawer-menu > *:nth-child(5),
+#portal-overflow-dropdown .grid > *:nth-child(5),
+#portal-overflow-dropdown .grid-cols-2 > *:nth-child(5),
+.mobile-stagger-d-5 {
+  animation-delay: 195ms !important;
+}
+
+.mobile-stagger-list > *:nth-child(6),
+.mobile-list-stagger > *:nth-child(6),
+[data-mobile-stagger] > *:nth-child(6),
+#mobile-drawer-menu > *:nth-child(6),
+.mobile-drawer-menu > *:nth-child(6),
+#portal-overflow-dropdown .grid > *:nth-child(6),
+#portal-overflow-dropdown .grid-cols-2 > *:nth-child(6),
+.mobile-stagger-d-6 {
+  animation-delay: 235ms !important;
+}
+
+.mobile-stagger-list > *:nth-child(7),
+.mobile-list-stagger > *:nth-child(7),
+[data-mobile-stagger] > *:nth-child(7),
+#mobile-drawer-menu > *:nth-child(7),
+.mobile-drawer-menu > *:nth-child(7),
+#portal-overflow-dropdown .grid > *:nth-child(7),
+#portal-overflow-dropdown .grid-cols-2 > *:nth-child(7),
+.mobile-stagger-d-7 {
+  animation-delay: 275ms !important;
+}
+
+.mobile-stagger-list > *:nth-child(8),
+.mobile-list-stagger > *:nth-child(8),
+[data-mobile-stagger] > *:nth-child(8),
+#mobile-drawer-menu > *:nth-child(8),
+.mobile-drawer-menu > *:nth-child(8),
+#portal-overflow-dropdown .grid > *:nth-child(8),
+#portal-overflow-dropdown .grid-cols-2 > *:nth-child(8),
+.mobile-stagger-d-8 {
+  animation-delay: 315ms !important;
+}
+
+.mobile-stagger-list > *:nth-child(9),
+.mobile-list-stagger > *:nth-child(9),
+[data-mobile-stagger] > *:nth-child(9),
+#mobile-drawer-menu > *:nth-child(9),
+.mobile-drawer-menu > *:nth-child(9),
+#portal-overflow-dropdown .grid > *:nth-child(9),
+#portal-overflow-dropdown .grid-cols-2 > *:nth-child(9),
+.mobile-stagger-d-9 {
+  animation-delay: 355ms !important;
+}
+
+.mobile-stagger-list > *:nth-child(10),
+.mobile-list-stagger > *:nth-child(10),
+[data-mobile-stagger] > *:nth-child(10),
+#mobile-drawer-menu > *:nth-child(10),
+.mobile-drawer-menu > *:nth-child(10),
+#portal-overflow-dropdown .grid > *:nth-child(10),
+#portal-overflow-dropdown .grid-cols-2 > *:nth-child(10),
+.mobile-stagger-d-10 {
+  animation-delay: 395ms !important;
+}
+
+.mobile-stagger-list > *:nth-child(11),
+.mobile-stagger-d-11 {
+  animation-delay: 435ms !important;
+}
+
+.mobile-stagger-list > *:nth-child(12),
+.mobile-stagger-d-12 {
+  animation-delay: 475ms !important;
+}
+
+/* Stagger inside nested section containers for mobile drawer */
+#mobile-drawer-menu .grid > button:nth-child(1) { animation-delay: 175ms !important; }
+#mobile-drawer-menu .grid > button:nth-child(2) { animation-delay: 215ms !important; }
+#mobile-drawer-menu .grid > button:nth-child(3) { animation-delay: 255ms !important; }
+#mobile-drawer-menu .grid > button:nth-child(4) { animation-delay: 295ms !important; }
+
+#mobile-drawer-menu .space-y-1 > button:nth-child(1),
+#mobile-drawer-menu div > button.min-h-\[44px\]:nth-of-type(1) {
+  animation-delay: 335ms !important;
+}
+#mobile-drawer-menu .space-y-1 > button:nth-child(2),
+#mobile-drawer-menu div > button.min-h-\[44px\]:nth-of-type(2) {
+  animation-delay: 375ms !important;
+}
+#mobile-drawer-menu .space-y-1 > button:nth-child(3),
+#mobile-drawer-menu div > button.min-h-\[44px\]:nth-of-type(3) {
+  animation-delay: 415ms !important;
+}
+#mobile-drawer-menu .space-y-1 > button:nth-child(4),
+#mobile-drawer-menu div > button.min-h-\[44px\]:nth-of-type(4) {
+  animation-delay: 455ms !important;
+}
+#mobile-drawer-menu .space-y-1 > button:nth-child(5),
+#mobile-drawer-menu div > button.min-h-\[44px\]:nth-of-type(5) {
+  animation-delay: 495ms !important;
+}
+
+/* Mobile bottom dock tab stagger on initial load */
+#mobile-bottom-dock .grid-cols-5 > button:nth-child(1) { animation: mobileSpringPop 360ms cubic-bezier(0.16, 1, 0.3, 1) 40ms both; }
+#mobile-bottom-dock .grid-cols-5 > button:nth-child(2) { animation: mobileSpringPop 360ms cubic-bezier(0.16, 1, 0.3, 1) 90ms both; }
+#mobile-bottom-dock .grid-cols-5 > button:nth-child(3) { animation: mobileSpringPop 360ms cubic-bezier(0.16, 1, 0.3, 1) 140ms both; }
+#mobile-bottom-dock .grid-cols-5 > button:nth-child(4) { animation: mobileSpringPop 360ms cubic-bezier(0.16, 1, 0.3, 1) 190ms both; }
+#mobile-bottom-dock .grid-cols-5 > button:nth-child(5) { animation: mobileSpringPop 360ms cubic-bezier(0.16, 1, 0.3, 1) 240ms both; }
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .mobile-stagger-item,
+  .mobile-stagger-list > *,
+  .mobile-list-stagger > *,
+  [data-mobile-stagger] > *,
+  #mobile-drawer-menu > *,
+  #portal-overflow-dropdown .grid > *,
+  #mobile-bottom-dock .grid-cols-5 > button {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+}
+
+/* ==========================================================================
+   DESKTOP ERGONOMICS & WIDESCREEN OPTIMIZATIONS (lg: 1024px, xl: 1280px, 2xl: 1536px)
+   ========================================================================== */
+@media screen and (min-width: 1024px) {
+  /* Prevent horizontal layout shifts and micro-overflows */
+  html, body {
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Refined desktop scrollbar */
+  ::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #F7F3EF;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #D5C7B8;
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #A68B6E;
+  }
+
+  /* Desktop Header & Nav ergonomics */
+  header.sticky {
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    background-color: rgba(255, 255, 255, 0.96);
+  }
+
+  /* High contrast focus ring for keyboard navigation */
+  a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+    outline: 2px solid #C5A880 !important;
+    outline-offset: 2px !important;
+  }
+
+  /* Card elevation and subtle depth on desktop */
+  .desktop-card-lift {
+    transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 220ms cubic-bezier(0.16, 1, 0.3, 1), border-color 220ms ease;
+  }
+  .desktop-card-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px -8px rgba(60, 14, 17, 0.08);
+  }
+
+  /* Optimal line length for desktop text blocks */
+  .desktop-prose {
+    max-width: 68ch;
+    line-height: 1.75;
+  }
+}
+
+
+

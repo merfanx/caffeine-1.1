@@ -1,0 +1,8 @@
+{
+  "name": "Caffeine Academic OS",
+  "description": "پلتفرم جامع، داده‌محور و Agentic موسسه کافئین برای ارزیابی رایگان، جعبه ابزار، برنامه‌ریزی، CRM، تحلیل آزمون و پرتال‌های دانش‌آموز، مشاور، والدین و ادمین",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

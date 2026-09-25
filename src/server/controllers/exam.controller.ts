@@ -5,7 +5,6 @@ import { authorizeStudentAccess } from '../security/studentAuthorizationService.
 import { normalizeId } from '../security/bolaIdorService.js';
 import { examRepository } from '../repositories/examRepository.js';
 import { PRELOADED_SAMPLE_EXAMS } from '../../services/examService.js';
-import { MOCK_EXAM_RESULTS } from '../../data/mockDatabase.js';
 import { INITIAL_QUESTION_BANK } from '../../services/questionBankService.js';
 import { INITIAL_ARTICLES } from '../../services/magazineService.js';
 
@@ -145,7 +144,7 @@ export const examController = {
         result.studentId = `guest-${Date.now()}`;
       }
 
-      const saved = db.insert(COL_EXAM_RESULTS, result, MOCK_EXAM_RESULTS);
+      const saved = db.insert(COL_EXAM_RESULTS, result, []);
       res.json({ success: true, result: saved });
     } catch (err: any) {
       res.status(500).json({ success: false, error: err.message });

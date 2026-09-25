@@ -53,7 +53,6 @@ import { recordSensitiveAudit } from '../storage/auditLogManager.js';
 import { auditService } from '../services/auditService.js';
 import { sanitizeString, setCustomGeminiKeyConfigured } from '../security/apiHardening.js';
 import { ensureStudentSupportChatRoom } from './chat.controller.js';
-import { DEFAULT_CHAT_ROOMS } from '../../data/defaultChatData.js';
 import { seedDefaultCredentials } from '../auth/passwordSecurity.js';
 
 const COL_USERS = 'user_credentials';

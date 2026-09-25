@@ -1,4 +1,4 @@
-import { getSubjectTaxonomy, getAllSubjectNames, ChapterTaxonomy } from '../data/subjectTaxonomies';
+import { getSubjectTaxonomy, getAllSubjectNames, ChapterTaxonomy } from '../lib/subjectTaxonomies';
 
 export interface BuildPromptParams {
   subject: string;

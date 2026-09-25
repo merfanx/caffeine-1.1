@@ -2,7 +2,7 @@ import path from 'path';
 import { defineConfig, Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
-import { SUBJECT_TAXONOMIES } from './src/data/subjectTaxonomies';
+import { SUBJECT_TAXONOMIES } from './src/lib/subjectTaxonomies';
 import { buildQuestionExtractionPrompt, validatePromptScope } from './src/services/promptBuilder';
 import { parseQuestionsHeuristically } from './src/services/questionBankService';
 

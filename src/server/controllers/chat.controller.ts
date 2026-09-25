@@ -12,7 +12,7 @@ import {
   generateAnonymousGuestId
 } from '../security/chatSecurityService.js';
 import { broadcastToRoom } from '../services/websocketService.js';
-import { DEFAULT_CHAT_ROOMS, DEFAULT_CHAT_MESSAGES } from '../../data/defaultChatData.js';
+import { DEFAULT_CHAT_ROOMS, DEFAULT_CHAT_MESSAGES } from '../../lib/defaultChatData.js';
 
 const COL_CHAT_ROOMS = 'internal_chat_rooms';
 const COL_CHAT_MESSAGES = 'internal_chat_messages';

@@ -3,7 +3,7 @@ import { db } from '../db/client.js';
 import { exams, examQuestions, questions, examResults, students, advisors, parents, parentStudents } from '../db/schema.js';
 import crypto from 'crypto';
 import { db as fileDb } from '../storage/fileDatabase.js';
-import { MOCK_EXAM_RESULTS } from '../../data/mockDatabase.js';
+
 
 export interface AuthenticatedUserContextLike {
   id?: string;
@@ -363,11 +363,11 @@ export const examRepository = {
         const results = fileDb.find<any>(
           'exam_results',
           (r) => normalizeId(r.studentId) === normTarget,
-          MOCK_EXAM_RESULTS
+          []
         );
         return results.slice(offset, offset + limit);
       }
-      const all = fileDb.find<any>('exam_results', undefined, MOCK_EXAM_RESULTS);
+      const all = fileDb.find<any>('exam_results', undefined, []);
       return all.slice(offset, offset + limit);
     }
 
@@ -385,7 +385,7 @@ export const examRepository = {
       const results = fileDb.find<any>(
         'exam_results',
         (r) => normalizeId(r.studentId) === myStudentId,
-        MOCK_EXAM_RESULTS
+        []
       );
 
       // Verify zero leakage before returning
@@ -413,7 +413,7 @@ export const examRepository = {
         const results = fileDb.find<any>(
           'exam_results',
           (r) => normalizeId(r.studentId) === normTarget,
-          MOCK_EXAM_RESULTS
+          []
         );
         return results.filter((r) => normalizeId(r.studentId) === normTarget).slice(offset, offset + limit);
       }
@@ -428,7 +428,7 @@ export const examRepository = {
       const results = fileDb.find<any>(
         'exam_results',
         (r) => allowedStudentIds.has(normalizeId(r.studentId)),
-        MOCK_EXAM_RESULTS
+        []
       );
       return results.slice(offset, offset + limit);
     }
@@ -458,7 +458,7 @@ export const examRepository = {
       const results = fileDb.find<any>(
         'exam_results',
         (r) => normalizeId(r.studentId) === target,
-        MOCK_EXAM_RESULTS
+        []
       );
       return results.filter((r) => normalizeId(r.studentId) === target).slice(offset, offset + limit);
     }
@@ -504,11 +504,11 @@ export const examRepository = {
       const rows = await db.select().from(examResults).where(eq(examResults.id, resultId)).limit(1);
       result = rows[0] || null;
     } catch {
-      result = fileDb.findById<any>('exam_results', resultId, MOCK_EXAM_RESULTS);
+      result = fileDb.findById<any>('exam_results', resultId, []);
     }
 
     if (!result) {
-      result = fileDb.findById<any>('exam_results', resultId, MOCK_EXAM_RESULTS);
+      result = fileDb.findById<any>('exam_results', resultId, []);
     }
 
     if (!result) return null;

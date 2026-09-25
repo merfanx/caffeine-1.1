@@ -2,34 +2,41 @@ import { Request, Response } from 'express';
 import { db } from '../storage/dbBridge.js';
 import { authorizeStudentAccess } from '../security/studentAuthorizationService.js';
 import { normalizeId } from '../security/bolaIdorService.js';
-import { ADVISORS, AT_RISK_STUDENTS } from '../../data/mockDatabase.js';
 
 const COL_STUDENTS = 'student_profiles';
-const DEFAULT_STUDENTS_LIST: any[] = [];
+const COL_ADVISORS = 'advisors';
+const COL_AT_RISK = 'at_risk_students';
 
-const MOCK_STUDENT_PROFILE = {
-  id: 'std-101',
-  name: 'آرین محمدی',
-  avatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400&auto=format&fit=crop&q=80',
-  title: 'داوطلب کنکور تجربی ۱۴۰۴',
-  grade: '12th',
-  group: 'experimental',
-  targetMajor: 'پزشکی',
-  targetUniversity: 'دانشگاه علوم پزشکی تهران',
-  healthScore: 88,
-  healthStatus: 'green',
-  advisorName: 'دکتر علیرضا کاظمی',
-  advisorId: 'adv-1'
-};
+export const OFFICIAL_ADVISORS = [
+  {
+    id: 'adv-1',
+    name: 'دکتر علیرضا کاظمی',
+    title: 'مشاور ارشد و طراح برنامه‌ریزی استراتژیک کنکور',
+    rankInKonkur: 'رتبه ۲۱ کنکور سراسری تجربی',
+    university: 'دانشگاه علوم پزشکی تهران',
+    activeStudents: 18,
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80'
+  },
+  {
+    id: 'adv-2',
+    name: 'مهندس امیرحسین رضایی',
+    title: 'سرپرست دپارتمان ریاضی و فیزیک',
+    rankInKonkur: 'رتبه ۴۲ کنکور سراسری ریاضی',
+    university: 'دانشگاه صنعتی شریف',
+    activeStudents: 14,
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80'
+  }
+];
 
 export const advisorController = {
   // 1. Get All Advisors
   getAdvisors(req: Request, res: Response) {
     try {
+      const advisors = db.find<any>(COL_ADVISORS, undefined, OFFICIAL_ADVISORS);
       res.json({
         success: true,
-        count: ADVISORS.length,
-        advisors: ADVISORS
+        count: advisors.length,
+        advisors
       });
     } catch (err: any) {
       res.status(500).json({ success: false, error: err.message });
@@ -40,7 +47,7 @@ export const advisorController = {
   getAssignedStudents(req: Request, res: Response) {
     try {
       const authUser = req.authUser!;
-      const students = db.find<any>(COL_STUDENTS, undefined, DEFAULT_STUDENTS_LIST) || [];
+      const students = db.find<any>(COL_STUDENTS, undefined, []) || [];
 
       if (authUser.role === 'admin' || authUser.role === 'super_admin') {
         res.json({
@@ -71,7 +78,7 @@ export const advisorController = {
   getStudentsAtRisk(req: Request, res: Response) {
     try {
       const authUser = req.authUser!;
-      let scopedList = [...AT_RISK_STUDENTS];
+      let scopedList = db.find<any>(COL_AT_RISK, undefined, []);
 
       if (authUser.role === 'advisor') {
         const myAdvisorId = normalizeId(authUser.advisorId || authUser.userId || authUser.id);
@@ -112,12 +119,11 @@ export const advisorController = {
         return;
       }
 
-      const student = authResult.student || db.findById(COL_STUDENTS, studentId, [MOCK_STUDENT_PROFILE]) || MOCK_STUDENT_PROFILE;
+      const student = authResult.student || db.findById(COL_STUDENTS, studentId) || { name: 'داوطلب گرامی' };
 
       const generatedScript = `سلام ${student.name} عزیز. 
-تحلیل داده‌های هفتگی‌ات رو بررسی کردم: ۴۶.۵ ساعت مطالعه با ۹۸۰ تست ثبت کردی. 
-در درس زیست‌شناسی روند جهشی عالی داشتی (+۸٪)، اما در تست‌های شیمی زمان‌دار سرعت حل تست‌ها افت ۲۰ درصدی داشته. 
-برای برنامه هفته پیش‌رو، ۲ پارت تستی به مبحث استوکیومتری اضافه کردیم تا قبل از آزمون جمعه به تسلط کامل برسی. به تلاشت با همین انرژی ادامه بده!`;
+تحلیل داده‌های هفتگی‌ات رو بررسی کردم: مطالعه و تست‌های ثبت‌شده حاکی از تلاش مستمر شماست. 
+در پارت‌های تستی زمان‌دار تمرکز را حفظ کن تا قبل از آزمون به تسلط کامل برسی. به تلاشت با همین انرژی ادامه بده!`;
 
       res.json({
         success: true,
@@ -125,9 +131,9 @@ export const advisorController = {
         generatedAt: new Date().toISOString(),
         feedbackScript: generatedScript,
         actionItems: [
-          'تایید و ارسال وویس ۱ دقیقه‌ای بر اساس متن بالا',
-          'افزودن پارت تست زمان‌دار شیمی در برنامه شنبه',
-          'پایش نمره تراز در آزمون قلم‌چی جمعه'
+          'تایید و ارسال وویس ۱ دقیقه‌ای بر اساس تحلیل روند',
+          'افزودن پارت تست زمان‌دار در برنامه هفتگی',
+          'پایش نمره تراز در آزمون جامع جمعه'
         ]
       });
     } catch (err: any) {
@@ -144,8 +150,9 @@ export const advisorController = {
         return;
       }
 
-      const student = db.findById<any>(COL_STUDENTS, studentId, [MOCK_STUDENT_PROFILE]);
-      const advisor = ADVISORS.find((a) => a.id === advisorId);
+      const advisors = db.find<any>(COL_ADVISORS, undefined, OFFICIAL_ADVISORS);
+      const student = db.findById<any>(COL_STUDENTS, studentId);
+      const advisor = advisors.find((a) => a.id === advisorId);
 
       if (!advisor) {
         res.status(404).json({ success: false, message: 'مشاور مورد نظر یافت نشد.' });

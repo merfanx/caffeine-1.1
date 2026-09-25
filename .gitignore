@@ -1,8 +1,11 @@
 # Dependencies
 node_modules/
 
-# Production Build
+# Production Build & Generated Packaging
 dist/
+cpanel_ready/
+*.bak
+*.map
 
 # Persistent User Data & Storage Volumes (APPLICATION CODE != USER DATA)
 shared/

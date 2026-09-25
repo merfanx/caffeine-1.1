@@ -8,8 +8,8 @@ import {
   EXPERIMENTAL_TAXONOMY,
   getExperimentalChapters,
   getExperimentalTopics
-} from '../../data/konkurExperimentalTaxonomy.js';
-import { SUBJECT_TAXONOMIES, getSubjectTaxonomy } from '../../data/subjectTaxonomies.js';
+} from '../../lib/konkurExperimentalTaxonomy.js';
+import { SUBJECT_TAXONOMIES, getSubjectTaxonomy } from '../../lib/subjectTaxonomies.js';
 import { buildQuestionExtractionPrompt, validatePromptScope } from '../../services/promptBuilder.js';
 import { parseQuestionsHeuristically } from '../../services/questionBankService.js';
 

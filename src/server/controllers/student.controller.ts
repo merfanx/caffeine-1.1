@@ -6,8 +6,8 @@ import { sanitizeString } from '../security/apiHardening.js';
 import { normalizeId } from '../security/bolaIdorService.js';
 import { recordSensitiveAudit } from '../storage/auditLogManager.js';
 import { examRepository } from '../repositories/examRepository.js';
-import { ADVISORS, MOCK_DAILY_REPORTS } from '../../data/mockDatabase.js';
-import { DEFAULT_ILLUSTRATED_AVATARS, AvatarItem } from '../../data/defaultAvatars.js';
+import { OFFICIAL_ADVISORS as ADVISORS } from './advisor.controller.js';
+import { DEFAULT_ILLUSTRATED_AVATARS, AvatarItem } from '../../lib/defaultAvatars.js';
 import { INITIAL_REPORTS } from '../../services/monthlyReportService.js';
 import { DailyReport, MonthlyReportCardData } from '../../types.js';
 import { sendAssessmentResultEmail, sendStudyPlanEmail } from '../services/emailService.js';
@@ -317,7 +317,7 @@ export const studentController = {
             ]
       };
 
-      const saved = db.insert<DailyReport>(COL_DAILY_REPORTS, newReport, MOCK_DAILY_REPORTS);
+      const saved = db.insert<DailyReport>(COL_DAILY_REPORTS, newReport, []);
 
       const aiFeedback =
         Number(completedPlanPercentage) >= 80
@@ -371,7 +371,7 @@ export const studentController = {
       const reports = db.find<DailyReport>(
         COL_DAILY_REPORTS,
         (r) => !requestedStudentId || requestedStudentId === 'all' || normalizeId(r.studentId) === normRequested,
-        MOCK_DAILY_REPORTS
+        []
       );
       res.json({ success: true, count: reports.length, scope: authResult.scope, reports });
     } catch (err: any) {
@@ -385,7 +385,7 @@ export const studentController = {
       const { studentId = 'std-101', date, reportId, feedback = '', voiceDuration = 0, remedialTaskId } = req.body;
       const normStudentId = normalizeId(studentId);
 
-      const allReports = db.find<DailyReport>(COL_DAILY_REPORTS, undefined, MOCK_DAILY_REPORTS);
+      const allReports = db.find<DailyReport>(COL_DAILY_REPORTS, undefined, []);
       let matched = allReports.find(
         (r) => (reportId && r.id === reportId) || (normalizeId(r.studentId) === normStudentId && (!date || r.date === date))
       );
@@ -400,7 +400,7 @@ export const studentController = {
         (matched as any).voiceMemoDuration = Number(voiceDuration) || 0;
         if (remedialTaskId) (matched as any).attachedRemedialTask = remedialTaskId;
         (matched as any).reviewedAt = new Date().toISOString();
-        db.update<DailyReport>(COL_DAILY_REPORTS, matched.id, matched, MOCK_DAILY_REPORTS);
+        db.update<DailyReport>(COL_DAILY_REPORTS, matched.id, matched, []);
       }
 
       res.json({
@@ -448,7 +448,7 @@ export const studentController = {
       const reports = db.find<DailyReport>(
         COL_DAILY_REPORTS,
         (r) => normalizeId(r.studentId) === normStudentId,
-        MOCK_DAILY_REPORTS
+        []
       ).filter((r) => normalizeId(r.studentId) === normStudentId);
 
       const rawRecentExams = await examRepository.getScopedRecentExams(user, id, 10);
@@ -543,7 +543,7 @@ export const studentController = {
       const reports = db.find<DailyReport>(
         COL_DAILY_REPORTS,
         (r) => normalizeId(r.studentId) === normStudentId,
-        MOCK_DAILY_REPORTS
+        []
       );
 
       // Compute live weekly statistics

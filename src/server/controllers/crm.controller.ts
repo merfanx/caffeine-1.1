@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { db } from '../storage/dbBridge.js';
 import { sanitizeString } from '../security/apiHardening.js';
 import { normalizeIranianMobile, maskPhoneNumber, dispatchSmsIrBroadcast } from '../services/smsService.js';
-import { MOCK_LEADS } from '../../data/mockDatabase.js';
 import { Lead } from '../../types.js';
 
 const COL_LEADS = 'leads';
@@ -18,7 +17,7 @@ export const crmController = {
   getLeads(req: Request, res: Response) {
     try {
       const { status, group, search } = req.query;
-      let results = db.find<Lead>(COL_LEADS, undefined, MOCK_LEADS);
+      let results = db.find<Lead>(COL_LEADS, undefined, []);
 
       if (status && status !== 'all') {
         results = results.filter((l) => l.status === status);

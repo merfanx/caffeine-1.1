@@ -7,7 +7,7 @@ import {
   getExperimentalChapters,
   getExperimentalTopics,
   getSubjectAIPrompt
-} from '../data/konkurExperimentalTaxonomy';
+} from '../lib/konkurExperimentalTaxonomy';
 import { buildQuestionExtractionPrompt, validatePromptScope, BuildPromptParams } from './promptBuilder';
 
 export { buildQuestionExtractionPrompt, validatePromptScope };

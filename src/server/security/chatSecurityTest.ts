@@ -6,7 +6,7 @@ import {
   MAX_CHAT_MESSAGE_LENGTH
 } from './chatSecurityService.js';
 import { AuthenticatedUserContext } from '../auth/adminAuthMiddleware.js';
-import { DEFAULT_CHAT_ROOMS } from '../../data/defaultChatData.js';
+import { DEFAULT_CHAT_ROOMS } from '../../lib/defaultChatData.js';
 
 /**
  * ============================================================================

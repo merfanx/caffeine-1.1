@@ -36,7 +36,26 @@ export function createApp(): Express {
   app.use(express.json({ limit: '25mb' }));
   app.use(express.urlencoded({ extended: true, limit: '25mb' }));
 
-  // 4. Security Headers & CORS Layer
+  // 4. Security Headers, Request ID & CORS Layer
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    // Generate unique Request ID if not provided
+    const reqId = (req.headers['x-request-id'] as string) || `req-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
+    res.setHeader('X-Request-Id', reqId);
+    (req as any).id = reqId;
+
+    // Permissions-Policy (M-01 & L-02)
+    res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');
+
+    // Prevent caching on dynamic API routes (L-04)
+    if (req.path.startsWith('/api/')) {
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+    }
+
+    next();
+  });
+
   app.use(smartCorsMiddleware);
   app.use(helmetSecurityMiddleware);
   app.use(sensitivePathBlockMiddleware);

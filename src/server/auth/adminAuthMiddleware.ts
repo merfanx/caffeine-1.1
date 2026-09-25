@@ -138,20 +138,6 @@ export function extractUserCredentials(req: Request): AuthenticatedUserContext |
   }
 
   if (!token) {
-    if (
-      req.headers['x-admin-key'] === 'caffeine_admin_master' ||
-      req.headers['x-admin-internal-key'] === 'caffeine_admin_master' ||
-      (req.headers['x-caffeine-role'] === 'admin' && (process.env.NODE_ENV !== 'production' || req.ip === '127.0.0.1'))
-    ) {
-      return {
-        id: 'usr-adm-01',
-        userId: 'usr-adm-01',
-        name: 'مدیر ارشد سامانه کافئین',
-        role: 'admin',
-        username: 'admin',
-        phone: '09120000001'
-      };
-    }
     return null;
   }
 

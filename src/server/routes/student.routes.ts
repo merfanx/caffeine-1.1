@@ -14,21 +14,21 @@ studentRouter.post('/tools/study-planner', formSubmissionRateLimiter, studentCon
 studentRouter.post('/assessment/submit', formSubmissionRateLimiter, studentController.submitAssessment);
 
 // Daily Reports
-studentRouter.post('/student/daily-report', formSubmissionRateLimiter, optionalAuth, studentController.submitDailyReport);
-studentRouter.post('/student/daily-reports', formSubmissionRateLimiter, optionalAuth, studentController.submitDailyReport);
-studentRouter.post('/student/daily-report/feedback', optionalAuth, studentController.submitDailyReportFeedback);
-studentRouter.get('/student/daily-reports', studentController.getDailyReports);
-studentRouter.get('/student/daily-report', studentController.getDailyReports);
+studentRouter.post('/student/daily-report', formSubmissionRateLimiter, requireAuth, studentController.submitDailyReport);
+studentRouter.post('/student/daily-reports', formSubmissionRateLimiter, requireAuth, studentController.submitDailyReport);
+studentRouter.post('/student/daily-report/feedback', requireRole('admin', 'advisor'), studentController.submitDailyReportFeedback);
+studentRouter.get('/student/daily-reports', requireAuth, studentController.getDailyReports);
+studentRouter.get('/student/daily-report', requireAuth, studentController.getDailyReports);
 
 // Weekly Study Plans (Coffee Plan)
-studentRouter.get('/student/study-plan', studentController.getStudyPlan);
-studentRouter.get('/student/study-plans', studentController.getStudyPlan);
-studentRouter.post('/student/study-plan', optionalAuth, studentController.saveStudyPlan);
-studentRouter.post('/student/study-plans', optionalAuth, studentController.saveStudyPlan);
+studentRouter.get('/student/study-plan', requireAuth, studentController.getStudyPlan);
+studentRouter.get('/student/study-plans', requireAuth, studentController.getStudyPlan);
+studentRouter.post('/student/study-plan', requireAuth, studentController.saveStudyPlan);
+studentRouter.post('/student/study-plans', requireAuth, studentController.saveStudyPlan);
 
 // Student Profile
 studentRouter.get('/student/dashboard-summary', optionalAuth, studentController.getDashboardSummary);
-studentRouter.get('/student/profile/:id', studentController.getProfile);
+studentRouter.get('/student/profile/:id', requireAuth, studentController.getProfile);
 studentRouter.post('/user/profile', requireAuth, studentController.updateProfile);
 
 // Avatars

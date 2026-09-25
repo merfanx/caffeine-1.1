@@ -312,8 +312,7 @@ switch (true) {
                 "channel" => "email",
                 "message" => "کد تایید ۶ رقمی فعال‌سازی با موفقیت به نشانی ایمیل شما ارسال شد.",
                 "email" => $maskedEmail,
-                "devCode" => $otpCode,
-                "expiresInSeconds" => 300
+                                "expiresInSeconds" => 300
             ]);
             break;
         }
@@ -353,10 +352,9 @@ switch (true) {
         echo json_encode([
             "success" => true,
             "channel" => "phone",
-            "message" => "کد تایید ۶ رقمی صادر گردید (کد: {$otpCode}).",
+            "message" => "کد تایید ۶ رقمی به شماره همراه شما ارسال شد.",
             "phone" => $maskedPhone,
-            "devCode" => $otpCode,
-            "expiresInSeconds" => 300
+                        "expiresInSeconds" => 300
         ]);
         break;
 
@@ -495,10 +493,16 @@ switch (true) {
         ]);
         break;
 
-    case ($route === '/auth/login'):
+        case ($route === '/auth/login'):
         $rawUsername = trim($body['identifier'] ?? ($body['username'] ?? ($body['email'] ?? ($body['phone'] ?? ''))));
         $password = trim($body['password'] ?? ($body['secret'] ?? ''));
         $role = $body['role'] ?? 'student';
+
+        if (empty($rawUsername) || empty($password)) {
+            http_response_code(400);
+            echo json_encode(["success" => false, "message" => "شناسه کاربری و کلمه عبور الزامی است."]);
+            break;
+        }
 
         $users = dbRead('users', [
             [
@@ -508,7 +512,7 @@ switch (true) {
                 "username" => "admin",
                 "name" => "مدیریت ارشد موسسه کافئین",
                 "role" => "admin",
-                "password" => "admin123"
+                "passwordHash" => password_hash("admin1404", PASSWORD_BCRYPT)
             ],
             [
                 "id" => "std-101",
@@ -517,7 +521,7 @@ switch (true) {
                 "username" => "student",
                 "name" => "آرین محمدی",
                 "role" => "student",
-                "password" => "123456",
+                "passwordHash" => password_hash("User@Secure1404", PASSWORD_BCRYPT),
                 "studentId" => "std-101",
                 "advisorId" => "adv-1"
             ],
@@ -528,7 +532,7 @@ switch (true) {
                 "username" => "advisor",
                 "name" => "دکتر علیرضا کاظمی",
                 "role" => "advisor",
-                "password" => "123456",
+                "passwordHash" => password_hash("Advisor@Secure1404", PASSWORD_BCRYPT),
                 "advisorId" => "adv-1"
             ],
             [
@@ -538,7 +542,7 @@ switch (true) {
                 "username" => "parent",
                 "name" => "آقای محمدی (ولی دانش‌آموز)",
                 "role" => "parent",
-                "password" => "123456",
+                "passwordHash" => password_hash("Parent@Secure1404", PASSWORD_BCRYPT),
                 "childStudentId" => "std-101"
             ]
         ]);
@@ -553,73 +557,17 @@ switch (true) {
 
             $matchesId = ($uEmail === $cleanU || $uPhone === $rawUsername || $uUsername === $cleanU);
             if ($matchesId) {
-                $uPass = $u['password'] ?? '';
-                $passValid = ($uPass === $password) ||
-                             empty($password) ||
-                             (($u['role'] ?? '') === 'admin' && in_array($password, ['admin123', 'admin1404', 'admin', 'caffeine1404', '123456'])) ||
-                             (in_array($password, ['123456', 'student1404', 'advisor1404', 'parent1404', 'admin123', 'admin1404']));
+                $uHash = $u['passwordHash'] ?? '';
+                $passValid = false;
+                if (!empty($uHash)) {
+                    $passValid = password_verify($password, $uHash);
+                } else if (!empty($u['password'])) {
+                    $passValid = hash_equals($u['password'], $password);
+                }
                 if ($passValid) {
                     $matchedUser = $u;
                     break;
                 }
-            }
-        }
-
-        // Special system accounts recognition if not in db
-        if (!$matchedUser) {
-            if (in_array($cleanU, ['admin', '09120000000', '09120000001', 'admin@caffeine-edu.ir', 'admin@caffeine.ir'])) {
-                $matchedUser = [
-                    "id" => "usr-admin-1",
-                    "phone" => "09120000000",
-                    "email" => "admin@caffeine-edu.ir",
-                    "username" => "admin",
-                    "name" => "مدیریت ارشد موسسه کافئین",
-                    "role" => "admin"
-                ];
-            } elseif (in_array($cleanU, ['advisor', '09122223344', '09123334455', 'dr_kazemi', 'advisor@caffeine-edu.ir'])) {
-                $matchedUser = [
-                    "id" => "adv-1",
-                    "phone" => "09122223344",
-                    "email" => "advisor@caffeine-edu.ir",
-                    "username" => "advisor",
-                    "name" => "دکتر علیرضا کاظمی (مشاور ارشد)",
-                    "role" => "advisor",
-                    "advisorId" => "adv-1"
-                ];
-            } elseif (in_array($cleanU, ['parent', '09129998877', 'parent_mohammadi', 'parent@caffeine-edu.ir'])) {
-                $matchedUser = [
-                    "id" => "parent-1",
-                    "phone" => "09129998877",
-                    "email" => "parent@caffeine-edu.ir",
-                    "username" => "parent",
-                    "name" => "آقای محمدی (ولی دانش‌آموز)",
-                    "role" => "parent",
-                    "childStudentId" => "std-101"
-                ];
-            } elseif (in_array($cleanU, ['student', 'aryan', 'aryan_mohammadi', '09121112233', 'aryan@caffeine-edu.ir'])) {
-                $matchedUser = [
-                    "id" => "std-101",
-                    "phone" => "09121112233",
-                    "email" => "aryan@caffeine-edu.ir",
-                    "username" => "student",
-                    "name" => "آرین محمدی",
-                    "role" => "student",
-                    "studentId" => "std-101",
-                    "advisorId" => "adv-1"
-                ];
-            } elseif (!empty($rawUsername) && (strlen($password) >= 3 || empty($password))) {
-                $identifierSeed = $rawUsername;
-                $isEm = filter_var($rawUsername, FILTER_VALIDATE_EMAIL);
-                $stdId = "std-" . substr(md5($identifierSeed), 0, 6);
-                $matchedUser = [
-                    "id" => $stdId,
-                    "name" => $isEm ? explode('@', $rawUsername)[0] : "کاربر ($rawUsername)",
-                    "email" => $isEm ? $rawUsername : null,
-                    "phone" => !$isEm ? $rawUsername : "09121112233",
-                    "role" => $role ?: "student",
-                    "studentId" => $stdId,
-                    "advisorId" => "adv-1"
-                ];
             }
         }
 

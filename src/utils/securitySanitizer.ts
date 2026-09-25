@@ -47,5 +47,7 @@ export function sanitizeLatexSource(input: string | undefined | null): string {
   if (!input) return '';
   return String(input)
     .replace(/\\(write18|input|include|catcode|def|let|futurelet|csname|endcsname)\b/gi, '')
+    .replace(/\\(htmlClass|htmlId|htmlStyle|htmlData)\b(\{[^}]*\})*/gi, '')
+    .replace(/\\(href|url)\s*\{\s*(javascript|data|vbscript):[\s\S]*?\}(\{[^}]*\})?/gi, '')
     .trim();
 }

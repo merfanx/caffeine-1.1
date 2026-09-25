@@ -139,9 +139,6 @@ export const authController = {
             ? 'کد تایید ۶ رقمی فعال‌سازی با موفقیت به نشانی ایمیل شما ارسال شد. لطفاً پوشه اینباکس یا هرزنامه را بررسی نمایید.'
             : (emailResult.message || 'کد تایید فعال‌سازی با موفقیت صادر شد.'),
           email: maskEmail(email),
-          isTestMode: emailResult.isTestMode,
-          previewUrl: emailResult.previewUrl,
-          devCode: (emailResult.isTestMode || process.env.NODE_ENV !== 'production') ? otpCode : undefined,
           expiresInSeconds: 300
         });
         return;
@@ -188,9 +185,8 @@ export const authController = {
       res.json({
         success: true,
         channel: 'phone',
-        message: `کد تایید ۶ رقمی برای شماره شما ثبت شد (کد تایید: ${otpCode}).`,
+        message: 'کد تایید ۶ رقمی به شماره همراه شما ارسال شد.',
         phone: maskPhoneNumber(normPhone),
-        devCode: otpCode,
         expiresInSeconds: 300
       });
     } catch (err: any) {
@@ -706,7 +702,8 @@ export const authController = {
 
       if (userIdx >= 0) {
         users[userIdx].passwordHash = passwordHash;
-        users[userIdx].password = newPassword.trim();
+        delete users[userIdx].password;
+        users[userIdx].isPlaintextPassword = false;
         users[userIdx].failedLoginAttempts = 0;
         users[userIdx].isLocked = false;
         users[userIdx].updatedAt = new Date().toISOString();
@@ -723,7 +720,6 @@ export const authController = {
           fullName: `کاربر ${hashId}`,
           role: 'student',
           passwordHash,
-          password: newPassword.trim(),
           isPlaintextPassword: false,
           algorithm: 'bcrypt',
           saltRounds: 10,
@@ -1008,33 +1004,6 @@ export const authController = {
       }
       if (!passwordMatch && foundUser.pinHash && typeof foundUser.pinHash === 'string') {
         passwordMatch = await bcrypt.compare(password, foundUser.pinHash);
-      }
-      if (!passwordMatch && foundUser.password) {
-        passwordMatch = foundUser.password === password;
-      }
-      if (!passwordMatch && foundUser.pin) {
-        passwordMatch = foundUser.pin === password;
-      }
-      // Strict credentials check: ONLY exact designated passwords or security PINs allowed
-      if (!passwordMatch && (foundUser.username === 'admin' || identifier === 'admin')) {
-        if (password === 'admin1404' || password === 'Admin@Caffeine2025' || password === '9999') {
-          passwordMatch = true;
-        }
-      }
-      if (!passwordMatch && (foundUser.username === 'advisor' || foundUser.username === 'dr_kazemi' || identifier === 'advisor')) {
-        if (password === 'advisor1404' || password === 'Advisor@Kazemi1404' || password === '4321') {
-          passwordMatch = true;
-        }
-      }
-      if (!passwordMatch && (foundUser.username === 'student' || foundUser.username === 'aryan_mohammadi' || identifier === 'student')) {
-        if (password === 'student1404' || password === 'aryan1404' || password === '1234') {
-          passwordMatch = true;
-        }
-      }
-      if (!passwordMatch && (foundUser.username === 'parent' || foundUser.username === 'parent_mohammadi' || identifier === 'parent')) {
-        if (password === 'parent1404' || password === '5678') {
-          passwordMatch = true;
-        }
       }
 
       if (!passwordMatch) {

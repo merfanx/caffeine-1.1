@@ -342,21 +342,38 @@ export const studentController = {
   // 6. Get Daily Reports History
   async getDailyReports(req: Request, res: Response) {
     try {
-      const user = extractUserCredentials(req) || {
-        id: (req.query.studentId as string) || 'std-101',
-        name: 'داوطلب کافئین',
-        role: 'student',
-        studentId: (req.query.studentId as string) || 'std-101'
-      };
+      const user = extractUserCredentials(req);
+      if (!user) {
+        res.status(401).json({
+          success: false,
+          error: 'UNAUTHORIZED_401',
+          message: 'احراز هویت الزامی است. لطفاً ابتدا وارد حساب کاربری خود شوید.'
+        });
+        return;
+      }
 
       const requestedStudentId = (req.query.studentId as string) || (user.studentId || user.userId || user.id || 'std-101');
+      const authResult = await authorizeStudentAccess(user, requestedStudentId, {
+        req,
+        resourceName: `/api/v1/student/daily-reports?studentId=${requestedStudentId}`
+      });
+
+      if (!authResult.authorized) {
+        res.status(authResult.statusCode).json({
+          success: false,
+          error: authResult.error || 'FORBIDDEN_IDOR_403',
+          message: authResult.message || 'عدم دسترسی: شما مجاز به مشاهده گزارش‌های این داوطلب نیستید.'
+        });
+        return;
+      }
+
       const normRequested = normalizeId(requestedStudentId);
       const reports = db.find<DailyReport>(
         COL_DAILY_REPORTS,
         (r) => !requestedStudentId || requestedStudentId === 'all' || normalizeId(r.studentId) === normRequested,
         MOCK_DAILY_REPORTS
       );
-      res.json({ success: true, count: reports.length, scope: 'granted', reports });
+      res.json({ success: true, count: reports.length, scope: authResult.scope, reports });
     } catch (err: any) {
       res.status(500).json({ success: false, error: err.message });
     }
@@ -402,12 +419,15 @@ export const studentController = {
   async getProfile(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const user = extractUserCredentials(req) || {
-        id: id || 'std-101',
-        name: 'داوطلب کافئین',
-        role: 'student',
-        studentId: id || 'std-101'
-      };
+      const user = extractUserCredentials(req);
+      if (!user) {
+        res.status(401).json({
+          success: false,
+          error: 'UNAUTHORIZED_401',
+          message: 'احراز هویت الزامی است. لطفاً ابتدا وارد حساب کاربری خود شوید.'
+        });
+        return;
+      }
 
       const authResult = await authorizeStudentAccess(user, id, {
         req,

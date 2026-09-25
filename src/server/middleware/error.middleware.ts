@@ -14,12 +14,21 @@ export function errorHandler(err: any, req: Request, res: Response, next: NextFu
     return next(err);
   }
 
-  const statusCode = typeof err.statusCode === 'number' ? err.statusCode : 500;
-  const message = err.message || 'یک خطای غیرمنتظره در پردازش درخواست سمت سرور رخ داد.';
+  const statusCode = typeof err.statusCode === 'number' && err.statusCode >= 400 && err.statusCode <= 599
+    ? err.statusCode
+    : (typeof err.status === 'number' && err.status >= 400 && err.status <= 599 ? err.status : 500);
+
+  // Sanitize internal error messages so server paths or SQL details never leak (M-06)
+  let rawMsg = typeof err.message === 'string' ? err.message : '';
+  if (rawMsg.includes('/') || rawMsg.includes('\\') || rawMsg.includes('node_modules') || rawMsg.includes('at ') || rawMsg.includes('SELECT') || rawMsg.includes('INSERT')) {
+    rawMsg = 'در پردازش درخواست شما خطای سیستمی رخ داد. لطفاً مجدداً تلاش فرمایید.';
+  }
+
+  const message = rawMsg || (statusCode === 500 ? 'یک خطای غیرمنتظره در پردازش درخواست سمت سرور رخ داد.' : 'درخواست ارسال‌شده معتبر نمی‌باشد.');
 
   res.status(statusCode).json({
     success: false,
-    error: err.code || 'INTERNAL_SERVER_ERROR',
+    error: err.code || (statusCode === 400 ? 'BAD_REQUEST' : statusCode === 401 ? 'UNAUTHORIZED' : statusCode === 403 ? 'FORBIDDEN' : statusCode === 404 ? 'NOT_FOUND' : statusCode === 429 ? 'RATE_LIMIT_EXCEEDED' : 'INTERNAL_SERVER_ERROR'),
     message
   });
 }

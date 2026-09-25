@@ -1,14 +1,19 @@
 import { Router } from 'express';
 import { authController } from '../controllers/auth.controller.js';
 import { requireAuth, requireAdminAuth } from '../middleware/auth.middleware.js';
-import { otpRateLimiter, loginRateLimitMiddleware } from '../middleware/rateLimit.middleware.js';
+import {
+  otpRateLimiter,
+  otpVerifyRateLimiter,
+  passwordResetRateLimiter,
+  loginRateLimitMiddleware
+} from '../middleware/rateLimit.middleware.js';
 
 export const authRouter = Router();
 
-// OTP Endpoints
+// OTP & Password Reset Endpoints
 authRouter.post('/auth/send-otp', otpRateLimiter, authController.sendOtp);
-authRouter.post('/auth/verify-otp', authController.verifyOtp);
-authRouter.post('/auth/reset-password', authController.resetPassword);
+authRouter.post('/auth/verify-otp', otpVerifyRateLimiter, authController.verifyOtp);
+authRouter.post('/auth/reset-password', passwordResetRateLimiter, authController.resetPassword);
 
 // Credential & Login Endpoints
 authRouter.post('/auth/register', loginRateLimitMiddleware, authController.register);

@@ -433,15 +433,13 @@ const X = ({ isOpen: W, onClose: b, onSuccess: w, initialMessage: D }) => {
         localStorage.setItem(storageKey, Date.now().toString());
         setRegTimer(180);
         setRegStep("otp");
-        setRegCode("123456");
-        setSuccessMsg("کد تایید فعال‌سازی دمو: ۱۲۳۴۵۶ (به صورت خودکار درج گردید)");
+        setErrorMsg("خطا در ارسال کد تایید. لطفاً اتصال اینترنت خود را بررسی نموده و مجدداً تلاش فرمایید.");
       }
     } catch {
       localStorage.setItem(storageKey, Date.now().toString());
       setRegTimer(180);
       setRegStep("otp");
-      setRegCode("123456");
-      setSuccessMsg("کد تایید فعال‌سازی دمو: ۱۲۳۴۵۶ (به صورت خودکار درج گردید)");
+      setErrorMsg("خطا در ارسال کد تایید. لطفاً اتصال اینترنت خود را بررسی نموده و مجدداً تلاش فرمایید.");
     } finally {
       setLoading(false);
     }
@@ -458,23 +456,7 @@ const X = ({ isOpen: W, onClose: b, onSuccess: w, initialMessage: D }) => {
     setErrorMsg("");
     try {
       let res = await y.verifyOtp(email, code, undefined, fullName).catch(() => null);
-      if (!res || !res.success) {
-        if (code === "123456" || code.length >= 5) {
-          const sId = "std-" + email.replace(/[^a-z0-9]/gi, "").slice(0, 6);
-          res = {
-            success: true,
-            role: "student",
-            token: "caff_jwt_" + Math.random().toString(36).slice(2) + Date.now().toString(36),
-            user: {
-              id: "usr-" + sId,
-              name: fullName,
-              email: email,
-              role: "student",
-              studentId: sId
-            }
-          };
-        }
-      }
+      if (!res || !res.success) { setErrorMsg(res && res.message ? res.message : "کد تایید وارد شده نامعتبر یا منقضی گردیده است."); return; }
       if (res && res.success) {
         const userRole = res.role || "student";
         const userName = res.user?.name || fullName;

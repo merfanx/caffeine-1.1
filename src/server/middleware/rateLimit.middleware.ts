@@ -62,6 +62,18 @@ export const loginRateLimitMiddleware = createRateLimiter(
   'تعداد دفعات تلاش ناموفق ورود بیش از حد مجاز است.'
 );
 
+export const otpVerifyRateLimiter = createRateLimiter(
+  10,
+  5 * 60 * 1000,
+  'تعداد دفعات تلاش برای راستی‌آزمایی کد بیش از حد مجاز است. لطفاً ۵ دقیقه دیگر تلاش کنید.'
+);
+
+export const passwordResetRateLimiter = createRateLimiter(
+  5,
+  15 * 60 * 1000,
+  'تعداد دفعات مجاز بازنشانی رمز عبور تکمیل شده است. لطفاً ۱۵ دقیقه دیگر تلاش نمایید.'
+);
+
 export const dbBackupRateLimiter = createRateLimiter(
   20,
   60 * 1000,
